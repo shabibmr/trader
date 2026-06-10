@@ -18,11 +18,11 @@
             <div class="logo-section">
                 <div class="logo-icon">▲</div>
                 <div class="logo-text">algoOptions</div>
-                <span class="logo-badge">NSE Simulator</span>
+                <span class="logo-badge hide-mobile">NSE Simulator</span>
             </div>
             
             <div class="header-status">
-                <!-- Simple / Pro view switcher -->
+                <!-- Simple / Pro / Explorer view switcher -->
                 <div class="view-toggle" role="tablist" aria-label="Choose view mode">
                     <button class="view-toggle-btn active" type="button" data-view="simple" role="tab">
                         <i data-lucide="sparkles" style="width: 14px; height: 14px;"></i>
@@ -32,6 +32,10 @@
                         <i data-lucide="layout-dashboard" style="width: 14px; height: 14px;"></i>
                         Pro
                     </button>
+                    <button class="view-toggle-btn" type="button" data-view="explorer" role="tab">
+                        <i data-lucide="compass" style="width: 14px; height: 14px;"></i>
+                        Explorer
+                    </button>
                 </div>
                 <button id="theme-toggle" type="button" class="theme-toggle" title="Toggle light / dark theme" aria-label="Toggle theme">
                     <span class="icon-sun">☀</span>
@@ -39,11 +43,11 @@
                 </button>
                 <div class="status-indicator">
                     <span id="status-dot" class="status-dot"></span>
-                    <span id="status-text">NSE Server Connected</span>
+                    <span id="status-text" class="hide-mobile">NSE Server Connected</span>
                 </div>
                 <div class="status-indicator" style="background: rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.2);">
                     <i data-lucide="wallet" style="width: 16px; height: 16px; color: var(--color-profit);"></i>
-                    <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Sim Balance:</span>
+                    <span class="hide-mobile" style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Sim Balance:</span>
                     <span id="header-balance" style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--color-profit);">₹10,00,000</span>
                 </div>
             </div>
@@ -179,7 +183,7 @@
                 <!-- Tab 1: Live NSE Option Chain Board -->
                 <section id="tab-option-chain" class="tab-content active">
                     <div class="glass-panel" style="padding: 20px;">
-                        <div class="chart-title" style="justify-content: space-between; margin-bottom: 12px;">
+                        <div class="chart-title option-chain-header">
                             <span style="display: flex; align-items: center; gap: 8px;">
                                 <i data-lucide="layers" style="width: 18px; height: 18px; color: var(--color-primary);"></i>
                                 NSE Live Option Chain (Call / Put Board)
@@ -191,14 +195,14 @@
                         </div>
 
                         <!-- Expiry Selector and Presets -->
-                        <div style="display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: center; margin-bottom: 20px; background: rgba(255,255,255,0.02); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
-                            <div class="form-group" style="flex-direction: row; align-items: center; gap: 12px;">
+                        <div class="expiry-preset-bar">
+                            <div class="form-group expiry-group">
                                 <label for="expiry-select" style="margin-bottom: 0;">Contract Expiry</label>
                                 <select id="expiry-select" style="width: 200px; padding: 6px 12px; font-size: 13px;">
                                     <option>Loading expiries...</option>
                                 </select>
                             </div>
-                            <div style="display: flex; gap: 10px; align-items: center;">
+                            <div class="preset-group">
                                 <label style="margin-bottom: 0;">Strategy Presets:</label>
                                 <select id="preset-select" style="width: 220px; padding: 6px 12px; font-size: 13px;">
                                     <option value="" selected>Custom Strategy Leg...</option>
@@ -279,7 +283,7 @@
 
                 <!-- Dynamic Option Leg Builder (Shared under Option Chain & Payoff Tab) -->
                 <div id="shared-leg-builder-panel" class="glass-panel" style="padding: 20px;">
-                    <div class="chart-title" style="justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                    <div class="chart-title leg-builder-header">
                         <span style="display: flex; align-items: center; gap: 8px;">
                             <i data-lucide="git-branch" style="width: 18px; height: 18px; color: var(--color-primary);"></i>
                             Active Option Legs Builder
@@ -342,7 +346,7 @@
                     </div>
 
                     <!-- CSV Exports -->
-                    <div style="display: flex; gap: 10px; margin-bottom: 16px;">
+                    <div class="export-buttons-group">
                         <button id="export-equity-btn" class="btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="exportEquityCSV()">
                             <i data-lucide="download" style="width: 14px; height: 14px;"></i>
                             Export Equity Curve (CSV)
@@ -379,7 +383,7 @@
                 <!-- Tab 4: Simulated Trade Ledger -->
                 <section id="tab-ledger" class="tab-content">
                     <div class="glass-panel" style="padding: 20px;">
-                        <div class="chart-title" style="margin-bottom: 15px; justify-content: space-between;">
+                        <div class="chart-title ledger-header">
                             <span style="display: flex; align-items: center; gap: 8px;">
                                 <i data-lucide="database" style="width: 18px; height: 18px; color: var(--color-primary);"></i>
                                 Options Simulated Executions Ledger & Settlements
@@ -570,6 +574,125 @@
             </div>
         </div>
         <!-- ===================== END SIMPLE VIEW ===================== -->
+
+        <!-- ===================== EXPLORER VIEW ===================== -->
+        <div id="explorer-view" style="display: none;">
+            <div class="explorer-container">
+                <!-- Controls bar -->
+                <div class="glass-panel explorer-controls-panel">
+                    <div class="explorer-controls-grid">
+                        <div class="form-group">
+                            <label for="exp-ticker-select">NSE Symbol</label>
+                            <select id="exp-ticker-select" class="form-control">
+                                <!-- Will be populated dynamically -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="exp-start-date">Start Date</label>
+                            <input type="date" id="exp-start-date" value="2025-01-01" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="exp-end-date">End Date</label>
+                            <input type="date" id="exp-end-date" value="2026-05-01" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="exp-expiry-select">Contract Expiry</label>
+                            <select id="exp-expiry-select" class="form-control">
+                                <option>Loading expiries...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="exp-view-date-select">Reference Date (View Date)</label>
+                            <select id="exp-view-date-select" class="form-control">
+                                <option>Select expiry first...</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main workspace grid (Split: Option Chain Table & Gemini Chat) -->
+                <div class="explorer-workspace-grid">
+                    <!-- Left: Options Chain -->
+                    <div class="glass-panel explorer-chain-panel">
+                        <div class="chart-title option-chain-header" style="margin-bottom: 15px;">
+                            <span style="display: flex; align-items: center; gap: 8px;">
+                                <i data-lucide="compass" style="width: 18px; height: 18px; color: var(--color-primary);"></i>
+                                Historical Options Chain Explorer
+                            </span>
+                            <div style="display: flex; gap: 12px; align-items: center;">
+                                <span id="exp-spot-display" style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--color-call);">Spot Price: ₹--</span>
+                                <span id="exp-dte-display" style="font-size: 12px; font-weight: 600; color: var(--text-muted); background: rgba(255,255,255,0.05); padding: 2px 8px; border-radius: 4px;">DTE: --</span>
+                            </div>
+                        </div>
+
+                        <!-- Option Chain Grid -->
+                        <div class="option-chain-container" style="max-height: 520px; overflow-y: auto;">
+                            <table class="option-chain-table explorer-table-style" id="exp-chain-table">
+                                <thead>
+                                    <tr>
+                                        <th class="ce-header">Delta</th>
+                                        <th class="ce-header">Theta</th>
+                                        <th class="ce-header">IV</th>
+                                        <th class="ce-header">OI</th>
+                                        <th class="ce-header">Vol</th>
+                                        <th class="ce-header" style="border-right: 1px solid var(--border-color);">LTP</th>
+                                        <th class="strike-header">Strike</th>
+                                        <th class="pe-header" style="border-left: 1px solid var(--border-color);">LTP</th>
+                                        <th class="pe-header">Vol</th>
+                                        <th class="pe-header">OI</th>
+                                        <th class="pe-header">IV</th>
+                                        <th class="pe-header">Theta</th>
+                                        <th class="pe-header">Delta</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="exp-chain-table-body">
+                                    <tr>
+                                        <td colspan="13" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                                            Select a symbol and expiry contract to inspect historical option chain...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Right: Gemini AI Chat Widget -->
+                    <div class="glass-panel chat-panel">
+                        <div class="chat-header">
+                            <div class="chat-header-title">
+                                <i data-lucide="bot" style="width: 20px; height: 20px; color: var(--color-primary);"></i>
+                                <span>Gemini Options Co-pilot</span>
+                            </div>
+                            <span class="chat-model-badge">Gemini Pro 3.1</span>
+                        </div>
+                        
+                        <div class="chat-history" id="chat-history">
+                            <div class="chat-message model">
+                                <div class="message-content">
+                                    Hello! I am your options co-pilot. I can help you analyze this options chain, understand Greeks (Delta, Theta), or design a custom strategy. Ask me anything!
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chat input & Quick suggestions -->
+                        <div class="chat-footer">
+                            <div class="chat-suggestions" id="chat-suggestions">
+                                <button type="button" class="chat-suggest-btn" data-query="Analyze this option chain">Analyze Chain</button>
+                                <button type="button" class="chat-suggest-btn" data-query="Explain Delta and Theta values">Explain Greeks</button>
+                                <button type="button" class="chat-suggest-btn" data-query="What strategy should I build for a bullish outlook?">Bullish Strategies</button>
+                            </div>
+                            <form id="chat-form" class="chat-input-form" onsubmit="event.preventDefault(); sendChatMessage();">
+                                <input type="text" id="chat-input" placeholder="Ask Gemini about this chain..." autocomplete="off" required>
+                                <button type="submit" class="chat-send-btn" aria-label="Send message">
+                                    <i data-lucide="send" style="width: 16px; height: 16px;"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ===================== END EXPLORER VIEW ===================== -->
     </div>
 
     <!-- Core App Logic Script -->
@@ -578,5 +701,6 @@
     <script src="simulator.js"></script>
     <script src="app.js"></script>
     <script src="simple.js?v=1"></script>
+    <script src="explorer.js?v=1"></script>
 </body>
 </html>

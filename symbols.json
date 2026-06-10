@@ -1,0 +1,1946 @@
+[
+  {
+    "symbol": "NIFTY",
+    "name": "NIFTY 50",
+    "type": "index",
+    "lot": 75,
+    "step": 50,
+    "spot": 22500.0,
+    "vol": 0.011
+  },
+  {
+    "symbol": "BANKNIFTY",
+    "name": "BANK NIFTY",
+    "type": "index",
+    "lot": 35,
+    "step": 100,
+    "spot": 48500.0,
+    "vol": 0.011
+  },
+  {
+    "symbol": "FINNIFTY",
+    "name": "FIN NIFTY",
+    "type": "index",
+    "lot": 65,
+    "step": 50,
+    "spot": 21500.0,
+    "vol": 0.011
+  },
+  {
+    "symbol": "MIDCPNIFTY",
+    "name": "MIDCAP NIFTY",
+    "type": "index",
+    "lot": 120,
+    "step": 25,
+    "spot": 12000.0,
+    "vol": 0.011
+  },
+  {
+    "symbol": "NIFTYNXT50",
+    "name": "NIFTY NEXT 50",
+    "type": "index",
+    "lot": 25,
+    "step": 100,
+    "spot": 65000.0,
+    "vol": 0.011
+  },
+  {
+    "symbol": "RELIANCE",
+    "name": "Reliance Industries",
+    "type": "equity",
+    "lot": 500,
+    "step": 20,
+    "spot": 2950.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "TCS",
+    "name": "Tata Consultancy Services",
+    "type": "equity",
+    "lot": 175,
+    "step": 50,
+    "spot": 3850.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "INFY",
+    "name": "Infosys",
+    "type": "equity",
+    "lot": 400,
+    "step": 10,
+    "spot": 1450.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "HDFCBANK",
+    "name": "HDFC Bank",
+    "type": "equity",
+    "lot": 550,
+    "step": 50.0,
+    "spot": 1650.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "ICICIBANK",
+    "name": "ICICI Bank",
+    "type": "equity",
+    "lot": 700,
+    "step": 50.0,
+    "spot": 1180.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "SBIN",
+    "name": "State Bank of India",
+    "type": "equity",
+    "lot": 750,
+    "step": 20.0,
+    "spot": 800.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "AXISBANK",
+    "name": "Axis Bank",
+    "type": "equity",
+    "lot": 625,
+    "step": 50.0,
+    "spot": 1150.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "KOTAKBANK",
+    "name": "Kotak Mahindra Bank",
+    "type": "equity",
+    "lot": 400,
+    "step": 50.0,
+    "spot": 1750.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "ITC",
+    "name": "ITC",
+    "type": "equity",
+    "lot": 1600,
+    "step": 10.0,
+    "spot": 430.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "LT",
+    "name": "Larsen & Toubro",
+    "type": "equity",
+    "lot": 150,
+    "step": 100.0,
+    "spot": 3600.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "HINDUNILVR",
+    "name": "Hindustan Unilever",
+    "type": "equity",
+    "lot": 300,
+    "step": 50.0,
+    "spot": 2450.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "BHARTIARTL",
+    "name": "Bharti Airtel",
+    "type": "equity",
+    "lot": 475,
+    "step": 50.0,
+    "spot": 1550.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "BAJFINANCE",
+    "name": "Bajaj Finance",
+    "type": "equity",
+    "lot": 125,
+    "step": 250.0,
+    "spot": 7200.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "BAJAJFINSV",
+    "name": "Bajaj Finserv",
+    "type": "equity",
+    "lot": 500,
+    "step": 50.0,
+    "spot": 1650.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "ASIANPAINT",
+    "name": "Asian Paints",
+    "type": "equity",
+    "lot": 200,
+    "step": 100.0,
+    "spot": 2900.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "MARUTI",
+    "name": "Maruti Suzuki",
+    "type": "equity",
+    "lot": 50,
+    "step": 250.0,
+    "spot": 11500.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "HCLTECH",
+    "name": "HCL Technologies",
+    "type": "equity",
+    "lot": 350,
+    "step": 50.0,
+    "spot": 1750.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "WIPRO",
+    "name": "Wipro",
+    "type": "equity",
+    "lot": 3000,
+    "step": 20.0,
+    "spot": 500.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "TECHM",
+    "name": "Tech Mahindra",
+    "type": "equity",
+    "lot": 600,
+    "step": 50.0,
+    "spot": 1600.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "SUNPHARMA",
+    "name": "Sun Pharmaceutical",
+    "type": "equity",
+    "lot": 350,
+    "step": 50.0,
+    "spot": 1700.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "TITAN",
+    "name": "Titan Company",
+    "type": "equity",
+    "lot": 175,
+    "step": 100.0,
+    "spot": 3400.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "ULTRACEMCO",
+    "name": "UltraTech Cement",
+    "type": "equity",
+    "lot": 50,
+    "step": 250.0,
+    "spot": 11000.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "NESTLEIND",
+    "name": "Nestle India",
+    "type": "equity",
+    "lot": 250,
+    "step": 50.0,
+    "spot": 2450.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "POWERGRID",
+    "name": "Power Grid Corp",
+    "type": "equity",
+    "lot": 1800,
+    "step": 10.0,
+    "spot": 320.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "NTPC",
+    "name": "NTPC",
+    "type": "equity",
+    "lot": 1500,
+    "step": 10.0,
+    "spot": 360.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "ONGC",
+    "name": "Oil & Natural Gas Corp",
+    "type": "equity",
+    "lot": 1925,
+    "step": 10.0,
+    "spot": 260.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "TATAMOTORS",
+    "name": "Tata Motors",
+    "type": "equity",
+    "lot": 550,
+    "step": 20.0,
+    "spot": 950.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "TATASTEEL",
+    "name": "Tata Steel",
+    "type": "equity",
+    "lot": 5500,
+    "step": 5.0,
+    "spot": 150.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "JSWSTEEL",
+    "name": "JSW Steel",
+    "type": "equity",
+    "lot": 675,
+    "step": 20.0,
+    "spot": 920.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "HINDALCO",
+    "name": "Hindalco Industries",
+    "type": "equity",
+    "lot": 1075,
+    "step": 20.0,
+    "spot": 650.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "COALINDIA",
+    "name": "Coal India",
+    "type": "equity",
+    "lot": 2100,
+    "step": 10.0,
+    "spot": 420.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "ADANIENT",
+    "name": "Adani Enterprises",
+    "type": "equity",
+    "lot": 300,
+    "step": 100.0,
+    "spot": 2900.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "ADANIPORTS",
+    "name": "Adani Ports & SEZ",
+    "type": "equity",
+    "lot": 400,
+    "step": 50.0,
+    "spot": 1350.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "M&M",
+    "name": "Mahindra & Mahindra",
+    "type": "equity",
+    "lot": 350,
+    "step": 100.0,
+    "spot": 2900.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "BAJAJ-AUTO",
+    "name": "Bajaj Auto",
+    "type": "equity",
+    "lot": 75,
+    "step": 250.0,
+    "spot": 9500.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "EICHERMOT",
+    "name": "Eicher Motors",
+    "type": "equity",
+    "lot": 175,
+    "step": 100.0,
+    "spot": 4800.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "HEROMOTOCO",
+    "name": "Hero MotoCorp",
+    "type": "equity",
+    "lot": 150,
+    "step": 100.0,
+    "spot": 4700.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "DRREDDY",
+    "name": "Dr Reddy's Labs",
+    "type": "equity",
+    "lot": 625,
+    "step": 50.0,
+    "spot": 1250.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "CIPLA",
+    "name": "Cipla",
+    "type": "equity",
+    "lot": 375,
+    "step": 50.0,
+    "spot": 1500.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "DIVISLAB",
+    "name": "Divi's Laboratories",
+    "type": "equity",
+    "lot": 100,
+    "step": 250.0,
+    "spot": 5900.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "APOLLOHOSP",
+    "name": "Apollo Hospitals",
+    "type": "equity",
+    "lot": 125,
+    "step": 250.0,
+    "spot": 7000.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "GRASIM",
+    "name": "Grasim Industries",
+    "type": "equity",
+    "lot": 250,
+    "step": 100.0,
+    "spot": 2600.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "BRITANNIA",
+    "name": "Britannia Industries",
+    "type": "equity",
+    "lot": 200,
+    "step": 100.0,
+    "spot": 4800.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "TATACONSUM",
+    "name": "Tata Consumer Products",
+    "type": "equity",
+    "lot": 550,
+    "step": 20.0,
+    "spot": 950.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "INDUSINDBK",
+    "name": "IndusInd Bank",
+    "type": "equity",
+    "lot": 500,
+    "step": 50.0,
+    "spot": 1000.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "BPCL",
+    "name": "Bharat Petroleum",
+    "type": "equity",
+    "lot": 1800,
+    "step": 10.0,
+    "spot": 300.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "IOC",
+    "name": "Indian Oil Corp",
+    "type": "equity",
+    "lot": 4875,
+    "step": 5.0,
+    "spot": 140.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "GAIL",
+    "name": "GAIL India",
+    "type": "equity",
+    "lot": 3150,
+    "step": 5.0,
+    "spot": 200.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "VEDL",
+    "name": "Vedanta",
+    "type": "equity",
+    "lot": 1150,
+    "step": 10.0,
+    "spot": 450.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "SHRIRAMFIN",
+    "name": "Shriram Finance",
+    "type": "equity",
+    "lot": 300,
+    "step": 100.0,
+    "spot": 3000.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "HDFCLIFE",
+    "name": "HDFC Life Insurance",
+    "type": "equity",
+    "lot": 550,
+    "step": 20.0,
+    "spot": 630.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "SBILIFE",
+    "name": "SBI Life Insurance",
+    "type": "equity",
+    "lot": 375,
+    "step": 50.0,
+    "spot": 1500.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "ICICIPRULI",
+    "name": "ICICI Prudential Life",
+    "type": "equity",
+    "lot": 700,
+    "step": 20.0,
+    "spot": 700.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "ICICIGI",
+    "name": "ICICI Lombard",
+    "type": "equity",
+    "lot": 325,
+    "step": 50.0,
+    "spot": 1900.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "DMART",
+    "name": "Avenue Supermarts",
+    "type": "equity",
+    "lot": 150,
+    "step": 100.0,
+    "spot": 3800.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "PIDILITIND",
+    "name": "Pidilite Industries",
+    "type": "equity",
+    "lot": 250,
+    "step": 100.0,
+    "spot": 2900.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "DABUR",
+    "name": "Dabur India",
+    "type": "equity",
+    "lot": 1250,
+    "step": 20.0,
+    "spot": 520.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "GODREJCP",
+    "name": "Godrej Consumer",
+    "type": "equity",
+    "lot": 500,
+    "step": 50.0,
+    "spot": 1200.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "MARICO",
+    "name": "Marico",
+    "type": "equity",
+    "lot": 850,
+    "step": 20.0,
+    "spot": 650.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "COLPAL",
+    "name": "Colgate Palmolive",
+    "type": "equity",
+    "lot": 175,
+    "step": 100.0,
+    "spot": 2900.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "BERGEPAINT",
+    "name": "Berger Paints",
+    "type": "equity",
+    "lot": 1100,
+    "step": 20.0,
+    "spot": 500.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "HAVELLS",
+    "name": "Havells India",
+    "type": "equity",
+    "lot": 500,
+    "step": 50.0,
+    "spot": 1800.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "VOLTAS",
+    "name": "Voltas",
+    "type": "equity",
+    "lot": 375,
+    "step": 50.0,
+    "spot": 1700.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "SIEMENS",
+    "name": "Siemens",
+    "type": "equity",
+    "lot": 100,
+    "step": 250.0,
+    "spot": 6500.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "ABB",
+    "name": "ABB India",
+    "type": "equity",
+    "lot": 62,
+    "step": 250.0,
+    "spot": 7800.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "BEL",
+    "name": "Bharat Electronics",
+    "type": "equity",
+    "lot": 2850,
+    "step": 10.0,
+    "spot": 300.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "HAL",
+    "name": "Hindustan Aeronautics",
+    "type": "equity",
+    "lot": 150,
+    "step": 100.0,
+    "spot": 4300.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "BHEL",
+    "name": "Bharat Heavy Electricals",
+    "type": "equity",
+    "lot": 2625,
+    "step": 10.0,
+    "spot": 250.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "SAIL",
+    "name": "Steel Authority of India",
+    "type": "equity",
+    "lot": 4700,
+    "step": 5.0,
+    "spot": 130.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "NMDC",
+    "name": "NMDC",
+    "type": "equity",
+    "lot": 4500,
+    "step": 5.0,
+    "spot": 220.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "JINDALSTEL",
+    "name": "Jindal Steel & Power",
+    "type": "equity",
+    "lot": 625,
+    "step": 50.0,
+    "spot": 1000.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "APLAPOLLO",
+    "name": "APL Apollo Tubes",
+    "type": "equity",
+    "lot": 390,
+    "step": 50.0,
+    "spot": 1550.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "PIIND",
+    "name": "PI Industries",
+    "type": "equity",
+    "lot": 125,
+    "step": 100.0,
+    "spot": 4200.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "AUROPHARMA",
+    "name": "Aurobindo Pharma",
+    "type": "equity",
+    "lot": 550,
+    "step": 50.0,
+    "spot": 1300.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "LUPIN",
+    "name": "Lupin",
+    "type": "equity",
+    "lot": 425,
+    "step": 50.0,
+    "spot": 2100.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "BIOCON",
+    "name": "Biocon",
+    "type": "equity",
+    "lot": 2500,
+    "step": 10.0,
+    "spot": 340.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "ALKEM",
+    "name": "Alkem Laboratories",
+    "type": "equity",
+    "lot": 100,
+    "step": 250.0,
+    "spot": 5500.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "TORNTPHARM",
+    "name": "Torrent Pharmaceuticals",
+    "type": "equity",
+    "lot": 250,
+    "step": 100.0,
+    "spot": 3300.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "ZYDUSLIFE",
+    "name": "Zydus Lifesciences",
+    "type": "equity",
+    "lot": 700,
+    "step": 50.0,
+    "spot": 1000.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "MANKIND",
+    "name": "Mankind Pharma",
+    "type": "equity",
+    "lot": 250,
+    "step": 50.0,
+    "spot": 2400.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "LAURUSLABS",
+    "name": "Laurus Labs",
+    "type": "equity",
+    "lot": 1700,
+    "step": 20.0,
+    "spot": 500.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "GLENMARK",
+    "name": "Glenmark Pharmaceuticals",
+    "type": "equity",
+    "lot": 725,
+    "step": 50.0,
+    "spot": 1600.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "ABBOTINDIA",
+    "name": "Abbott India",
+    "type": "equity",
+    "lot": 17,
+    "step": 500.0,
+    "spot": 29000.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "MAXHEALTH",
+    "name": "Max Healthcare",
+    "type": "equity",
+    "lot": 525,
+    "step": 50.0,
+    "spot": 1100.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "FORTIS",
+    "name": "Fortis Healthcare",
+    "type": "equity",
+    "lot": 1000,
+    "step": 20.0,
+    "spot": 650.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "LALPATHLAB",
+    "name": "Dr Lal PathLabs",
+    "type": "equity",
+    "lot": 200,
+    "step": 100.0,
+    "spot": 3000.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "METROPOLIS",
+    "name": "Metropolis Healthcare",
+    "type": "equity",
+    "lot": 300,
+    "step": 50.0,
+    "spot": 2000.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "SYNGENE",
+    "name": "Syngene International",
+    "type": "equity",
+    "lot": 750,
+    "step": 20.0,
+    "spot": 850.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "PEL",
+    "name": "Piramal Enterprises",
+    "type": "equity",
+    "lot": 550,
+    "step": 50.0,
+    "spot": 1050.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "MFSL",
+    "name": "Max Financial Services",
+    "type": "equity",
+    "lot": 800,
+    "step": 50.0,
+    "spot": 1150.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "MUTHOOTFIN",
+    "name": "Muthoot Finance",
+    "type": "equity",
+    "lot": 275,
+    "step": 50.0,
+    "spot": 1900.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "MANAPPURAM",
+    "name": "Manappuram Finance",
+    "type": "equity",
+    "lot": 3000,
+    "step": 5.0,
+    "spot": 180.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "CHOLAFIN",
+    "name": "Cholamandalam Investment",
+    "type": "equity",
+    "lot": 625,
+    "step": 50.0,
+    "spot": 1500.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "BAJAJHLDNG",
+    "name": "Bajaj Holdings",
+    "type": "equity",
+    "lot": 75,
+    "step": 250.0,
+    "spot": 11000.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "SBICARD",
+    "name": "SBI Cards & Payment",
+    "type": "equity",
+    "lot": 800,
+    "step": 20.0,
+    "spot": 700.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "PFC",
+    "name": "Power Finance Corp",
+    "type": "equity",
+    "lot": 1300,
+    "step": 10.0,
+    "spot": 450.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "RECLTD",
+    "name": "REC",
+    "type": "equity",
+    "lot": 1000,
+    "step": 10.0,
+    "spot": 480.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "IRFC",
+    "name": "Indian Railway Finance",
+    "type": "equity",
+    "lot": 4602,
+    "step": 5.0,
+    "spot": 150.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "LICHSGFIN",
+    "name": "LIC Housing Finance",
+    "type": "equity",
+    "lot": 850,
+    "step": 20.0,
+    "spot": 620.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "HUDCO",
+    "name": "Housing & Urban Dev Corp",
+    "type": "equity",
+    "lot": 2725,
+    "step": 5.0,
+    "spot": 220.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "CANBK",
+    "name": "Canara Bank",
+    "type": "equity",
+    "lot": 6750,
+    "step": 5.0,
+    "spot": 100.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "PNB",
+    "name": "Punjab National Bank",
+    "type": "equity",
+    "lot": 8000,
+    "step": 5.0,
+    "spot": 100.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "BANKBARODA",
+    "name": "Bank of Baroda",
+    "type": "equity",
+    "lot": 2925,
+    "step": 5.0,
+    "spot": 240.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "UNIONBANK",
+    "name": "Union Bank of India",
+    "type": "equity",
+    "lot": 4425,
+    "step": 5.0,
+    "spot": 120.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "IDFCFIRSTB",
+    "name": "IDFC First Bank",
+    "type": "equity",
+    "lot": 7100,
+    "step": 2.5,
+    "spot": 70.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "FEDERALBNK",
+    "name": "Federal Bank",
+    "type": "equity",
+    "lot": 5000,
+    "step": 5.0,
+    "spot": 200.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "BANDHANBNK",
+    "name": "Bandhan Bank",
+    "type": "equity",
+    "lot": 3600,
+    "step": 5.0,
+    "spot": 170.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "AUBANK",
+    "name": "AU Small Finance Bank",
+    "type": "equity",
+    "lot": 500,
+    "step": 20.0,
+    "spot": 650.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "INDHOTEL",
+    "name": "Indian Hotels",
+    "type": "equity",
+    "lot": 850,
+    "step": 20.0,
+    "spot": 750.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "JUBLFOOD",
+    "name": "Jubilant FoodWorks",
+    "type": "equity",
+    "lot": 625,
+    "step": 20.0,
+    "spot": 650.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "TRENT",
+    "name": "Trent",
+    "type": "equity",
+    "lot": 100,
+    "step": 250.0,
+    "spot": 6500.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "PAGEIND",
+    "name": "Page Industries",
+    "type": "equity",
+    "lot": 15,
+    "step": 500.0,
+    "spot": 42000.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "ABFRL",
+    "name": "Aditya Birla Fashion",
+    "type": "equity",
+    "lot": 2600,
+    "step": 10.0,
+    "spot": 300.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "NYKAA",
+    "name": "FSN E-Commerce (Nykaa)",
+    "type": "equity",
+    "lot": 3125,
+    "step": 5.0,
+    "spot": 180.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "ZOMATO",
+    "name": "Zomato",
+    "type": "equity",
+    "lot": 2425,
+    "step": 10.0,
+    "spot": 270.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "PAYTM",
+    "name": "One97 (Paytm)",
+    "type": "equity",
+    "lot": 725,
+    "step": 20.0,
+    "spot": 900.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "POLICYBZR",
+    "name": "PB Fintech",
+    "type": "equity",
+    "lot": 300,
+    "step": 50.0,
+    "spot": 1700.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "DELHIVERY",
+    "name": "Delhivery",
+    "type": "equity",
+    "lot": 1700,
+    "step": 10.0,
+    "spot": 380.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "IRCTC",
+    "name": "Indian Railway Catering",
+    "type": "equity",
+    "lot": 875,
+    "step": 20.0,
+    "spot": 800.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "CONCOR",
+    "name": "Container Corp",
+    "type": "equity",
+    "lot": 500,
+    "step": 20.0,
+    "spot": 800.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "DLF",
+    "name": "DLF",
+    "type": "equity",
+    "lot": 825,
+    "step": 20.0,
+    "spot": 800.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "GODREJPROP",
+    "name": "Godrej Properties",
+    "type": "equity",
+    "lot": 275,
+    "step": 100.0,
+    "spot": 2800.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "OBEROIRLTY",
+    "name": "Oberoi Realty",
+    "type": "equity",
+    "lot": 350,
+    "step": 50.0,
+    "spot": 1800.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "PRESTIGE",
+    "name": "Prestige Estates",
+    "type": "equity",
+    "lot": 450,
+    "step": 50.0,
+    "spot": 1600.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "LODHA",
+    "name": "Macrotech Developers",
+    "type": "equity",
+    "lot": 450,
+    "step": 50.0,
+    "spot": 1200.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "PHOENIXLTD",
+    "name": "Phoenix Mills",
+    "type": "equity",
+    "lot": 350,
+    "step": 50.0,
+    "spot": 1600.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "INDIGO",
+    "name": "InterGlobe Aviation",
+    "type": "equity",
+    "lot": 150,
+    "step": 100.0,
+    "spot": 4500.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "CESC",
+    "name": "CESC",
+    "type": "equity",
+    "lot": 3625,
+    "step": 5.0,
+    "spot": 170.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "TATAPOWER",
+    "name": "Tata Power",
+    "type": "equity",
+    "lot": 1450,
+    "step": 10.0,
+    "spot": 400.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "ADANIPOWER",
+    "name": "Adani Power",
+    "type": "equity",
+    "lot": 850,
+    "step": 20.0,
+    "spot": 600.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "ADANIGREEN",
+    "name": "Adani Green Energy",
+    "type": "equity",
+    "lot": 300,
+    "step": 50.0,
+    "spot": 1000.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "ADANIENSOL",
+    "name": "Adani Energy Solutions",
+    "type": "equity",
+    "lot": 475,
+    "step": 20.0,
+    "spot": 900.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "NHPC",
+    "name": "NHPC",
+    "type": "equity",
+    "lot": 6400,
+    "step": 2.5,
+    "spot": 85.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "SJVN",
+    "name": "SJVN",
+    "type": "equity",
+    "lot": 6200,
+    "step": 5.0,
+    "spot": 110.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "TORNTPOWER",
+    "name": "Torrent Power",
+    "type": "equity",
+    "lot": 375,
+    "step": 50.0,
+    "spot": 1600.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "JSWENERGY",
+    "name": "JSW Energy",
+    "type": "equity",
+    "lot": 800,
+    "step": 20.0,
+    "spot": 650.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "PETRONET",
+    "name": "Petronet LNG",
+    "type": "equity",
+    "lot": 3000,
+    "step": 10.0,
+    "spot": 320.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "IGL",
+    "name": "Indraprastha Gas",
+    "type": "equity",
+    "lot": 1375,
+    "step": 10.0,
+    "spot": 400.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "GUJGASLTD",
+    "name": "Gujarat Gas",
+    "type": "equity",
+    "lot": 1250,
+    "step": 20.0,
+    "spot": 500.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "MGL",
+    "name": "Mahanagar Gas",
+    "type": "equity",
+    "lot": 400,
+    "step": 50.0,
+    "spot": 1500.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "OIL",
+    "name": "Oil India",
+    "type": "equity",
+    "lot": 1400,
+    "step": 10.0,
+    "spot": 450.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "HINDPETRO",
+    "name": "Hindustan Petroleum",
+    "type": "equity",
+    "lot": 2025,
+    "step": 10.0,
+    "spot": 400.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "MRF",
+    "name": "MRF",
+    "type": "equity",
+    "lot": 5,
+    "step": 500.0,
+    "spot": 130000.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "BALKRISIND",
+    "name": "Balkrishna Industries",
+    "type": "equity",
+    "lot": 300,
+    "step": 100.0,
+    "spot": 2800.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "APOLLOTYRE",
+    "name": "Apollo Tyres",
+    "type": "equity",
+    "lot": 1700,
+    "step": 20.0,
+    "spot": 500.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "MOTHERSON",
+    "name": "Samvardhana Motherson",
+    "type": "equity",
+    "lot": 3800,
+    "step": 5.0,
+    "spot": 160.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "BOSCHLTD",
+    "name": "Bosch",
+    "type": "equity",
+    "lot": 25,
+    "step": 500.0,
+    "spot": 33000.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "ASHOKLEY",
+    "name": "Ashok Leyland",
+    "type": "equity",
+    "lot": 5000,
+    "step": 5.0,
+    "spot": 220.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "TVSMOTOR",
+    "name": "TVS Motor",
+    "type": "equity",
+    "lot": 350,
+    "step": 100.0,
+    "spot": 2500.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "BHARATFORG",
+    "name": "Bharat Forge",
+    "type": "equity",
+    "lot": 500,
+    "step": 50.0,
+    "spot": 1400.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "ESCORTS",
+    "name": "Escorts Kubota",
+    "type": "equity",
+    "lot": 175,
+    "step": 100.0,
+    "spot": 3700.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "CUMMINSIND",
+    "name": "Cummins India",
+    "type": "equity",
+    "lot": 200,
+    "step": 100.0,
+    "spot": 3400.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "EXIDEIND",
+    "name": "Exide Industries",
+    "type": "equity",
+    "lot": 1800,
+    "step": 10.0,
+    "spot": 400.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "DIXON",
+    "name": "Dixon Technologies",
+    "type": "equity",
+    "lot": 50,
+    "step": 250.0,
+    "spot": 14000.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "POLYCAB",
+    "name": "Polycab India",
+    "type": "equity",
+    "lot": 125,
+    "step": 250.0,
+    "spot": 6800.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "PERSISTENT",
+    "name": "Persistent Systems",
+    "type": "equity",
+    "lot": 100,
+    "step": 250.0,
+    "spot": 5500.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "COFORGE",
+    "name": "Coforge",
+    "type": "equity",
+    "lot": 150,
+    "step": 250.0,
+    "spot": 8500.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "LTIM",
+    "name": "LTIMindtree",
+    "type": "equity",
+    "lot": 150,
+    "step": 250.0,
+    "spot": 5800.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "MPHASIS",
+    "name": "Mphasis",
+    "type": "equity",
+    "lot": 275,
+    "step": 100.0,
+    "spot": 2800.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "LTTS",
+    "name": "L&T Technology Services",
+    "type": "equity",
+    "lot": 150,
+    "step": 100.0,
+    "spot": 4900.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "OFSS",
+    "name": "Oracle Financial Services",
+    "type": "equity",
+    "lot": 75,
+    "step": 250.0,
+    "spot": 11000.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "TATAELXSI",
+    "name": "Tata Elxsi",
+    "type": "equity",
+    "lot": 90,
+    "step": 250.0,
+    "spot": 7000.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "KPITTECH",
+    "name": "KPIT Technologies",
+    "type": "equity",
+    "lot": 400,
+    "step": 50.0,
+    "spot": 1500.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "INDUSTOWER",
+    "name": "Indus Towers",
+    "type": "equity",
+    "lot": 1800,
+    "step": 10.0,
+    "spot": 400.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "IDEA",
+    "name": "Vodafone Idea",
+    "type": "equity",
+    "lot": 70000,
+    "step": 0.5,
+    "spot": 10.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "HINDCOPPER",
+    "name": "Hindustan Copper",
+    "type": "equity",
+    "lot": 2650,
+    "step": 10.0,
+    "spot": 300.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "NATIONALUM",
+    "name": "National Aluminium",
+    "type": "equity",
+    "lot": 3750,
+    "step": 5.0,
+    "spot": 220.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "RVNL",
+    "name": "Rail Vikas Nigam",
+    "type": "equity",
+    "lot": 1075,
+    "step": 10.0,
+    "spot": 400.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "IRB",
+    "name": "IRB Infrastructure",
+    "type": "equity",
+    "lot": 9000,
+    "step": 2.5,
+    "spot": 55.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "GMRINFRA",
+    "name": "GMR Airports",
+    "type": "equity",
+    "lot": 9000,
+    "step": 2.5,
+    "spot": 90.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "CGPOWER",
+    "name": "CG Power & Industrial",
+    "type": "equity",
+    "lot": 1000,
+    "step": 20.0,
+    "spot": 700.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "KALYANKJIL",
+    "name": "Kalyan Jewellers",
+    "type": "equity",
+    "lot": 1175,
+    "step": 20.0,
+    "spot": 600.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "TITAGARH",
+    "name": "Titagarh Rail Systems",
+    "type": "equity",
+    "lot": 450,
+    "step": 50.0,
+    "spot": 1100.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "BDL",
+    "name": "Bharat Dynamics",
+    "type": "equity",
+    "lot": 325,
+    "step": 50.0,
+    "spot": 1500.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "MAZDOCK",
+    "name": "Mazagon Dock Shipbuilders",
+    "type": "equity",
+    "lot": 175,
+    "step": 100.0,
+    "spot": 2800.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "COCHINSHIP",
+    "name": "Cochin Shipyard",
+    "type": "equity",
+    "lot": 300,
+    "step": 50.0,
+    "spot": 1600.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "SUPREMEIND",
+    "name": "Supreme Industries",
+    "type": "equity",
+    "lot": 125,
+    "step": 100.0,
+    "spot": 4500.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "ASTRAL",
+    "name": "Astral",
+    "type": "equity",
+    "lot": 275,
+    "step": 50.0,
+    "spot": 1800.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "DEEPAKNTR",
+    "name": "Deepak Nitrite",
+    "type": "equity",
+    "lot": 250,
+    "step": 50.0,
+    "spot": 2400.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "SRF",
+    "name": "SRF",
+    "type": "equity",
+    "lot": 200,
+    "step": 50.0,
+    "spot": 2400.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "AARTIIND",
+    "name": "Aarti Industries",
+    "type": "equity",
+    "lot": 1150,
+    "step": 10.0,
+    "spot": 450.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "NAVINFLUOR",
+    "name": "Navin Fluorine",
+    "type": "equity",
+    "lot": 150,
+    "step": 100.0,
+    "spot": 3500.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "TATACHEM",
+    "name": "Tata Chemicals",
+    "type": "equity",
+    "lot": 550,
+    "step": 50.0,
+    "spot": 1000.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "UPL",
+    "name": "UPL",
+    "type": "equity",
+    "lot": 1355,
+    "step": 20.0,
+    "spot": 550.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "CHAMBLFERT",
+    "name": "Chambal Fertilisers",
+    "type": "equity",
+    "lot": 1300,
+    "step": 20.0,
+    "spot": 550.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "COROMANDEL",
+    "name": "Coromandel International",
+    "type": "equity",
+    "lot": 500,
+    "step": 50.0,
+    "spot": 1800.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "BALRAMCHIN",
+    "name": "Balrampur Chini Mills",
+    "type": "equity",
+    "lot": 1200,
+    "step": 20.0,
+    "spot": 550.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "AMBUJACEM",
+    "name": "Ambuja Cements",
+    "type": "equity",
+    "lot": 1050,
+    "step": 20.0,
+    "spot": 550.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "ACC",
+    "name": "ACC",
+    "type": "equity",
+    "lot": 250,
+    "step": 50.0,
+    "spot": 2200.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "DALBHARAT",
+    "name": "Dalmia Bharat",
+    "type": "equity",
+    "lot": 275,
+    "step": 50.0,
+    "spot": 1800.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "SHREECEM",
+    "name": "Shree Cement",
+    "type": "equity",
+    "lot": 25,
+    "step": 500.0,
+    "spot": 26000.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "RAMCOCEM",
+    "name": "Ramco Cements",
+    "type": "equity",
+    "lot": 550,
+    "step": 20.0,
+    "spot": 950.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "JKCEMENT",
+    "name": "JK Cement",
+    "type": "equity",
+    "lot": 125,
+    "step": 100.0,
+    "spot": 4500.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "VBL",
+    "name": "Varun Beverages",
+    "type": "equity",
+    "lot": 850,
+    "step": 20.0,
+    "spot": 600.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "UNITDSPR",
+    "name": "United Spirits",
+    "type": "equity",
+    "lot": 400,
+    "step": 50.0,
+    "spot": 1500.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "UBL",
+    "name": "United Breweries",
+    "type": "equity",
+    "lot": 267,
+    "step": 50.0,
+    "spot": 2000.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "PGHH",
+    "name": "P&G Hygiene",
+    "type": "equity",
+    "lot": 25,
+    "step": 500.0,
+    "spot": 15000.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "CANFINHOME",
+    "name": "Can Fin Homes",
+    "type": "equity",
+    "lot": 725,
+    "step": 20.0,
+    "spot": 850.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "CAMS",
+    "name": "Computer Age Management",
+    "type": "equity",
+    "lot": 150,
+    "step": 100.0,
+    "spot": 4500.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "KEI",
+    "name": "KEI Industries",
+    "type": "equity",
+    "lot": 150,
+    "step": 100.0,
+    "spot": 4000.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "CROMPTON",
+    "name": "Crompton Greaves Consumer",
+    "type": "equity",
+    "lot": 1800,
+    "step": 10.0,
+    "spot": 400.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "WHIRLPOOL",
+    "name": "Whirlpool of India",
+    "type": "equity",
+    "lot": 300,
+    "step": 50.0,
+    "spot": 1900.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "BSE",
+    "name": "BSE",
+    "type": "equity",
+    "lot": 375,
+    "step": 100.0,
+    "spot": 2700.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "MCX",
+    "name": "Multi Commodity Exchange",
+    "type": "equity",
+    "lot": 100,
+    "step": 250.0,
+    "spot": 5800.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "ANGELONE",
+    "name": "Angel One",
+    "type": "equity",
+    "lot": 250,
+    "step": 100.0,
+    "spot": 2700.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "CDSL",
+    "name": "Central Depository Services",
+    "type": "equity",
+    "lot": 625,
+    "step": 50.0,
+    "spot": 1500.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "KFINTECH",
+    "name": "KFin Technologies",
+    "type": "equity",
+    "lot": 400,
+    "step": 50.0,
+    "spot": 1300.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "YESBANK",
+    "name": "Yes Bank",
+    "type": "equity",
+    "lot": 27000,
+    "step": 0.5,
+    "spot": 20.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "IDBI",
+    "name": "IDBI Bank",
+    "type": "equity",
+    "lot": 7000,
+    "step": 2.5,
+    "spot": 85.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "INDIANB",
+    "name": "Indian Bank",
+    "type": "equity",
+    "lot": 900,
+    "step": 20.0,
+    "spot": 550.0,
+    "vol": 0.018
+  },
+  {
+    "symbol": "BANKINDIA",
+    "name": "Bank of India",
+    "type": "equity",
+    "lot": 5200,
+    "step": 5.0,
+    "spot": 110.0,
+    "vol": 0.018
+  }
+]

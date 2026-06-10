@@ -785,7 +785,7 @@ function downloadCSV(filename, rows) {
     const csv = rows.map(r => r.map(cell => {
         const s = String(cell ?? '');
         return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-    }).join(',')).join('\n');
+    }).join('|')).join('\n');
 
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -1026,13 +1026,20 @@ function renderBacktestCharts() {
 function setViewMode(mode) {
     const simpleView = document.getElementById("simple-view");
     const proView = document.getElementById("pro-view");
+    const explorerView = document.getElementById("explorer-view");
     if (!simpleView || !proView) return;
 
     const isSimple = mode === "simple";
+    const isPro = mode === "pro";
+    const isExplorer = mode === "explorer";
+
     simpleView.style.display = isSimple ? "" : "none";
     // #pro-view is `display: contents` in CSS so the existing layout is intact;
     // restore that (empty string) rather than forcing `block`.
-    proView.style.display = isSimple ? "none" : "";
+    proView.style.display = isPro ? "" : "none";
+    if (explorerView) {
+        explorerView.style.display = isExplorer ? "" : "none";
+    }
 
     document.querySelectorAll(".view-toggle-btn").forEach(btn => {
         btn.classList.toggle("active", btn.dataset.view === mode);
@@ -1042,6 +1049,7 @@ function setViewMode(mode) {
     localStorage.setItem("algo-view-mode", mode);
 
     if (isSimple && window.onEnterSimpleMode) window.onEnterSimpleMode();
+    if (isExplorer && window.onEnterExplorerMode) window.onEnterExplorerMode();
 }
 
 // Expose helpers used by simple.js (these are module-scope function declarations).
@@ -1055,8 +1063,25 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     // Precedence: explicit ?view= deep link > saved preference > Simple default.
     const urlView = new URLSearchParams(window.location.search).get("view");
-    const initialView = (urlView === "simple" || urlView === "pro")
+    const initialView = (urlView === "simple" || urlView === "pro" || urlView === "explorer")
         ? urlView
         : (localStorage.getItem("algo-view-mode") || "simple");
     setViewMode(initialView);
+
+    // Collapsible Sidebar Config for Mobile/Tablet views (<= 1024px)
+    const sidebarTitle = document.querySelector('.sidebar-title');
+    const sidebarConfig = document.querySelector('.sidebar-config');
+    if (sidebarTitle && sidebarConfig) {
+        // Collapse by default on load if screen width is <= 1024px
+        if (window.innerWidth <= 1024) {
+            sidebarConfig.classList.add('collapsed');
+        }
+
+        // Toggle on click
+        sidebarTitle.addEventListener('click', () => {
+            if (window.innerWidth <= 1024) {
+                sidebarConfig.classList.toggle('collapsed');
+            }
+        });
+    }
 });

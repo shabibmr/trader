@@ -37,6 +37,9 @@ def stable_seed(symbol):
 PORT = 8080
 DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.1-pro")
+MAX_CHAT_PAYLOAD = 1 * 1024 * 1024  # 1 MB cap on /api/chat request bodies
+
 
 def load_symbol_universe():
     """
@@ -536,7 +539,7 @@ class CustomAPIHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     def end_headers(self):
         # Allow CORS
         self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, OPTIONS')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
         # Never cache the static assets: during local dev a stale styles.css /
         # app.js silently masks edits (the browser keeps the old copy because
@@ -559,6 +562,13 @@ class CustomAPIHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         else:
             # Fall back to serving files
             super().do_GET()
+
+    def do_POST(self):
+        if self.path.startswith('/api/chat'):
+            self.handle_chat()
+        else:
+            self.send_response(404)
+            self.end_headers()
 
     def handle_fetch_options(self):
         # Extract query parameters
@@ -596,6 +606,155 @@ class CustomAPIHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.send_response(500)
             self.end_headers()
             self.wfile.write(json.dumps({'error': str(e)}).encode('utf-8'))
+
+    def handle_chat(self):
+        content_length = int(self.headers.get('Content-Length', 0))
+        if content_length > MAX_CHAT_PAYLOAD:
+            self.send_response(413)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            self.wfile.write(json.dumps({'error': 'Payload too large'}).encode('utf-8'))
+            return
+        post_data = self.rfile.read(content_length)
+        try:
+            payload = json.loads(post_data.decode('utf-8'))
+        except Exception as e:
+            self.send_response(400)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            self.wfile.write(json.dumps({'error': 'Invalid JSON payload'}).encode('utf-8'))
+            return
+
+        api_key = os.environ.get("GEMINI_API_KEY")
+        
+        # Extract fields
+        messages = payload.get('messages', [])
+        context = payload.get('context', {})
+        
+        symbol = context.get('symbol', 'NIFTY')
+        spot_price = context.get('spotPrice', 22500)
+        expiry_date = context.get('expiryDate', '')
+        view_date = context.get('viewDate', '')
+        dte = context.get('dte', 30)
+        iv = context.get('iv', 15)
+        chain_summary = context.get('chainSummary', '')
+
+        system_instruction = (
+            "You are an expert options trading co-pilot built by algoOptions.\n"
+            "You are helping the user analyze option chains, understand Greeks, and design option strategies.\n\n"
+            "Current Application Context:\n"
+            f"- Active Symbol: {symbol}\n"
+            f"- Historical Spot Price on View Date: Rs. {spot_price:,.2f}\n"
+            f"- Selected Expiry Date: {expiry_date}\n"
+            f"- Selected View Date (Reference Date): {view_date}\n"
+            f"- Days to Expiry (DTE): {dte} days\n"
+            f"- Baseline IV: {iv:.2f}%\n"
+            f"- Option Chain Context (ATM & Near-the-money strikes):\n{chain_summary}\n\n"
+            "Be concise, accurate, and professional. Explain concepts clearly (like Delta, Theta, Implied Volatility) "
+            "and suggest actionable option strategies (like Bull Call Spread, Iron Condor) based on the user's market views."
+        )
+
+        if not api_key:
+            user_msg = messages[-1].get('parts', [{}])[0].get('text', '') if messages else ""
+            mock_reply = self.generate_mock_reply(user_msg, symbol, spot_price, expiry_date, view_date, dte)
+            
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            self.wfile.write(json.dumps({
+                'reply': mock_reply,
+                'warning': 'GEMINI_API_KEY environment variable is not set. Showing a simulated response.'
+            }).encode('utf-8'))
+            return
+
+        # Prepare request to Gemini API
+        contents = []
+        for msg in messages:
+            contents.append({
+                'role': msg.get('role', 'user'),
+                'parts': [{'text': msg.get('parts', [{}])[0].get('text', '')}]
+            })
+            
+        gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent?key={api_key}"
+        gemini_payload = {
+            "systemInstruction": {
+                "parts": [{"text": system_instruction}]
+            },
+            "contents": contents
+        }
+        
+        try:
+            r = requests.post(gemini_url, json=gemini_payload, timeout=15)
+            r.raise_for_status()
+            res_data = r.json()
+
+            # Extract text reply — candidates can be empty (e.g. safety block)
+            try:
+                reply_text = res_data['candidates'][0]['content']['parts'][0]['text']
+            except (KeyError, IndexError, TypeError):
+                print(f"[SERVER API] Gemini returned no usable candidates: {json.dumps(res_data)[:500]}")
+                reply_text = "I couldn't generate a response for that request (the AI returned no content). Please try rephrasing your question."
+
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            self.wfile.write(json.dumps({'reply': reply_text}).encode('utf-8'))
+        except Exception as e:
+            print(f"[SERVER API] Gemini API call failed: {e}")
+            self.send_response(500)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            self.wfile.write(json.dumps({'error': f"Gemini API error: {str(e)}"}).encode('utf-8'))
+
+    def generate_mock_reply(self, query, symbol, spot_price, expiry_date, view_date, dte):
+        query_lower = query.lower()
+        
+        warning_msg = (
+            "\n\n*(Note: To enable full AI chat using Gemini, set your `GEMINI_API_KEY` environment variable "
+            "and restart the server.)*"
+        )
+        
+        if 'delta' in query_lower:
+            return (
+                f"For {symbol} on {view_date} (Spot: ₹{spot_price:,.2f}), Delta measures the rate of change "
+                f"of the option price per ₹1 move in the underlying asset.\n\n"
+                f"- **Call Delta** ranges from 0 to +1.0 (ATM is ~0.50). It tells you how much the call premium will rise if the underlying goes up.\n"
+                f"- **Put Delta** ranges from 0 to -1.0 (ATM is ~-0.50). It tells you how much the put premium will rise if the underlying goes down.\n\n"
+                f"In the current chain, strikes above ₹{spot_price:.0f} have lower Call Deltas, and strikes below have lower Put Deltas."
+                + warning_msg
+            )
+        elif 'theta' in query_lower:
+            return (
+                f"Theta represents the daily time decay of the option's premium for {symbol}.\n\n"
+                f"With {dte} days remaining until the {expiry_date} expiry, time decay is active. "
+                f"ATM options have the highest absolute Theta because they contain the most extrinsic value. "
+                f"Theta accelerates as expiry approaches, which benefits option sellers but hurts option buyers."
+                + warning_msg
+            )
+        elif 'strategy' in query_lower or 'spread' in query_lower or 'condor' in query_lower:
+            return (
+                f"Based on {symbol} trading at ₹{spot_price:,.2f} on {view_date}:\n\n"
+                f"1. **Bullish View**: Consider a **Bull Call Spread** (buy ATM call, sell OTM call) to limit risk while capturing upside.\n"
+                f"2. **Bearish View**: Consider a **Bear Put Spread** (buy ATM put, sell OTM put) to profit from a down move.\n"
+                f"3. **Neutral View**: With {dte} days to expiry, an **Iron Condor** or **Short Strangle** allows you to collect premium as long as {symbol} stays within a range."
+                + warning_msg
+            )
+        elif 'iv' in query_lower or 'volatility' in query_lower:
+            return (
+                f"Implied Volatility (IV) represents the market's expectation of future price swing magnitude for {symbol}.\n\n"
+                f"- Higher IV increases option premiums (both calls and puts) because of a higher chance of finishing in-the-money.\n"
+                f"- Vega measures the sensitivity of the option price to a 1% change in IV.\n"
+                f"Currently, the baseline IV is set to what was recorded or simulated for {view_date}."
+                + warning_msg
+            )
+        else:
+            return (
+                f"Hello! I am your options co-pilot. I see we are exploring {symbol} options for the {expiry_date} expiry, "
+                f"viewed on {view_date} (Spot: ₹{spot_price:,.2f}, DTE: {dte} days).\n\n"
+                f"You can ask me questions about option Greeks (Delta, Theta), trading strategies, or how to interpret "
+                f"the premium and volume data in the table."
+                + warning_msg
+            )
 
 def run_server():
     os.chdir(DIRECTORY)

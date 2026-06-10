@@ -1,2 +1,5 @@
 .antigravitycli/
 __pycache__/
+_tmp_*.html
+*.png
+.claude/scratch/
