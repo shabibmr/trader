@@ -1258,6 +1258,13 @@ textarea.strategy-code {
    MOBILE RESPONSIVENESS OVERRIDES
    ========================================================================= */
 
+/* Laptop: slimmer Pro sidebar so the option chain board fits without scroll */
+@media (max-width: 1440px) {
+    .main-workspace {
+        grid-template-columns: 300px 1fr;
+    }
+}
+
 /* General Mobile/Tablet Overrides */
 @media (max-width: 1024px) {
     .app-container {
@@ -1474,7 +1481,7 @@ textarea.strategy-code {
 }
 
 .explorer-container {
-    max-width: 1400px;
+    max-width: 1600px;
     margin: 0 auto;
     padding: 24px;
     display: flex;
@@ -1530,7 +1537,10 @@ textarea.strategy-code {
 
 .explorer-workspace-grid {
     display: grid;
-    grid-template-columns: 1.75fr 1.25fr;
+    /* minmax(0, ...) lets the chain panel shrink instead of blowing out the grid;
+       the chain column gets the lion's share so the 13-column table fits without
+       horizontal scroll on desktop */
+    grid-template-columns: minmax(0, 2.4fr) minmax(320px, 1fr);
     gap: 24px;
     align-items: stretch;
 }
@@ -1544,6 +1554,11 @@ textarea.strategy-code {
     flex-direction: column;
 }
 
+/* 13 tight numeric columns — needs less width than the Pro chain board */
+.option-chain-table.explorer-table-style {
+    min-width: 880px;
+}
+
 .explorer-table-style th {
     background: rgba(15, 23, 42, 0.5);
     font-size: 10px;
@@ -1551,12 +1566,12 @@ textarea.strategy-code {
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: var(--text-muted);
-    padding: 10px 8px;
+    padding: 10px 6px;
     border-bottom: 2px solid var(--border-color);
 }
 
 .explorer-table-style td {
-    padding: 10px 8px;
+    padding: 10px 6px;
     font-size: 12px;
     text-align: center;
     border-bottom: 1px solid rgba(255, 255, 255, 0.03);
@@ -1786,12 +1801,54 @@ textarea.strategy-code {
     40% { transform: scale(1.0); }
 }
 
-@media (max-width: 1200px) {
+/* Laptop: stack chain above chat once the 2-column split gets too tight */
+@media (max-width: 1380px) {
     .explorer-workspace-grid {
         grid-template-columns: 1fr;
     }
     .chat-panel {
         height: 500px;
+    }
+}
+
+/* Mobile: tighten Explorer spacing and let panels breathe full-width */
+@media (max-width: 768px) {
+    .explorer-container {
+        padding: 12px;
+        gap: 14px;
+    }
+
+    .explorer-controls-panel,
+    .explorer-chain-panel,
+    .chat-panel {
+        padding: 14px;
+    }
+
+    .explorer-controls-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .explorer-controls-grid .form-group:first-child {
+        grid-column: 1 / -1;
+    }
+
+    .explorer-workspace-grid {
+        gap: 14px;
+    }
+
+    .chat-panel {
+        height: min(520px, 80vh);
+    }
+
+    .chat-message {
+        max-width: 92%;
+    }
+}
+
+@media (max-width: 400px) {
+    .explorer-controls-grid {
+        grid-template-columns: 1fr;
     }
 }
 
