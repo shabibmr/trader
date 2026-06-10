@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>algoOptions - NSE Options Backtesting & Strategy Simulator</title>
-    <link rel="stylesheet" href="styles.css">
+    <meta name="color-scheme" content="dark light">
+    <link rel="stylesheet" href="styles.css?v=6">
     <!-- Chart.js for beautiful payoff and equity curves -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Lucide Icons via CDN for modern premium icons -->
@@ -21,6 +22,21 @@
             </div>
             
             <div class="header-status">
+                <!-- Simple / Pro view switcher -->
+                <div class="view-toggle" role="tablist" aria-label="Choose view mode">
+                    <button class="view-toggle-btn active" type="button" data-view="simple" role="tab">
+                        <i data-lucide="sparkles" style="width: 14px; height: 14px;"></i>
+                        Simple
+                    </button>
+                    <button class="view-toggle-btn" type="button" data-view="pro" role="tab">
+                        <i data-lucide="layout-dashboard" style="width: 14px; height: 14px;"></i>
+                        Pro
+                    </button>
+                </div>
+                <button id="theme-toggle" type="button" class="theme-toggle" title="Toggle light / dark theme" aria-label="Toggle theme">
+                    <span class="icon-sun">☀</span>
+                    <span class="icon-moon">☽</span>
+                </button>
                 <div class="status-indicator">
                     <span id="status-dot" class="status-dot"></span>
                     <span id="status-text">NSE Server Connected</span>
@@ -33,6 +49,8 @@
             </div>
         </header>
 
+        <!-- ===================== PRO VIEW (existing dashboard) ===================== -->
+        <div id="pro-view">
         <!-- Main Workspace Grid -->
         <div class="main-workspace">
             <!-- Sidebar: Parameters & Controls -->
@@ -45,13 +63,11 @@
                 <!-- Ticker Select -->
                 <div class="form-group">
                     <label for="ticker-select">NSE Symbol</label>
+                    <!-- Options are populated dynamically from symbols.json by
+                         loadSymbolUniverse(); the static NIFTY entry is a fallback
+                         used only if that fetch fails. -->
                     <select id="ticker-select">
                         <option value="NIFTY" selected>NIFTY 50 (Index)</option>
-                        <option value="BANKNIFTY">BANKNIFTY (Index)</option>
-                        <option value="FINNIFTY">FINNIFTY (Index)</option>
-                        <option value="RELIANCE">RELIANCE (Equity)</option>
-                        <option value="TCS">TCS (IT Services)</option>
-                        <option value="INFY">INFOSYS (IT Services)</option>
                     </select>
                 </div>
 
@@ -401,6 +417,159 @@
                 </section>
             </main>
         </div>
+        </div>
+        <!-- ===================== END PRO VIEW ===================== -->
+
+        <!-- ===================== SIMPLE VIEW (beginner-first) ===================== -->
+        <div id="simple-view">
+            <div class="simple-container">
+
+                <!-- Coaching banner (dismissible) -->
+                <div class="coach-banner" id="coach-banner">
+                    <i data-lucide="lightbulb" style="width: 18px; height: 18px; flex-shrink: 0; color: var(--color-put);"></i>
+                    <span>New to options? Just tell us where you think the market is heading — we'll suggest a trade, show what you could make or lose, and explain it in plain English.</span>
+                    <button class="coach-dismiss" id="coach-dismiss" type="button" aria-label="Dismiss tip">&times;</button>
+                </div>
+
+                <!-- Context: symbol + spot -->
+                <div class="simple-context">
+                    <div class="ctx-left">
+                        <span class="ctx-symbol" id="simple-symbol-name">NIFTY 50</span>
+                        <span class="ctx-spot" id="simple-spot">₹--</span>
+                    </div>
+                    <span class="ctx-note" id="simple-data-note"></span>
+                </div>
+
+                <!-- 1. Market Direction -->
+                <section class="simple-section">
+                    <h2 class="simple-h2"><span class="step-num">1</span> Where do you think the market is heading?</h2>
+                    <div class="direction-grid" id="direction-grid">
+                        <button class="direction-card bullish active" type="button" data-direction="bullish">
+                            <div class="dir-icon">▲</div>
+                            <div class="dir-title">Bullish</div>
+                            <div class="dir-sub">I expect prices to rise</div>
+                        </button>
+                        <button class="direction-card neutral" type="button" data-direction="neutral">
+                            <div class="dir-icon">◆</div>
+                            <div class="dir-title">Neutral</div>
+                            <div class="dir-sub">I expect it to stay flat</div>
+                        </button>
+                        <button class="direction-card bearish" type="button" data-direction="bearish">
+                            <div class="dir-icon">▼</div>
+                            <div class="dir-title">Bearish</div>
+                            <div class="dir-sub">I expect prices to fall</div>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- 2. Opportunity Summary -->
+                <section class="simple-section">
+                    <h2 class="simple-h2"><span class="step-num">2</span> Your opportunity at a glance</h2>
+                    <div class="opp-grid">
+                        <div class="opp-tile profit">
+                            <div class="opp-label">Potential Profit
+                                <span class="info-chip" tabindex="0" data-tip="The most you could make if the trade goes your way at expiry.">?</span>
+                            </div>
+                            <div class="opp-value" id="opp-profit">—</div>
+                        </div>
+                        <div class="opp-tile risk">
+                            <div class="opp-label">Maximum Risk
+                                <span class="info-chip" tabindex="0" data-tip="The most you could lose. With defined-risk trades, this is capped no matter what the market does.">?</span>
+                            </div>
+                            <div class="opp-value" id="opp-risk">—</div>
+                        </div>
+                        <div class="opp-tile chance">
+                            <div class="opp-label">Chance of Profit
+                                <span class="info-chip" tabindex="0" data-tip="An estimate of how likely this trade finishes in profit, based on the market's expected price swings.">?</span>
+                            </div>
+                            <div class="opp-value" id="opp-chance">—</div>
+                        </div>
+                        <div class="opp-tile time">
+                            <div class="opp-label">Days Remaining
+                                <span class="info-chip" tabindex="0" data-tip="How many days until these options expire and settle.">?</span>
+                            </div>
+                            <div class="opp-value" id="opp-days">—</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. Trade Builder -->
+                <section class="simple-section">
+                    <h2 class="simple-h2"><span class="step-num">3</span> Pick a strategy that fits</h2>
+                    <div class="strategy-chips" id="strategy-chips"></div>
+                    <p class="strategy-desc" id="strategy-desc"></p>
+
+                    <div class="builder-controls">
+                        <div class="control-block">
+                            <label>Time Horizon</label>
+                            <div class="segmented" id="horizon-seg">
+                                <button type="button" data-dte="7">1 Week</button>
+                                <button type="button" data-dte="14">2 Weeks</button>
+                                <button type="button" data-dte="30" class="active">1 Month</button>
+                            </div>
+                        </div>
+                        <div class="control-block">
+                            <label>Market Mood
+                                <span class="info-chip" tabindex="0" data-tip="How choppy you expect the market to be. Calmer markets make options cheaper; volatile markets make them pricier.">?</span>
+                            </label>
+                            <div class="segmented" id="mood-seg">
+                                <button type="button" data-iv="12">Calm</button>
+                                <button type="button" data-iv="15" class="active">Normal</button>
+                                <button type="button" data-iv="25">Volatile</button>
+                            </div>
+                        </div>
+                        <div class="control-block">
+                            <label>Strike Width <span class="control-hint" id="width-hint">Balanced</span>
+                                <span class="info-chip" tabindex="0" data-tip="How far apart the option strikes sit. Wider spacing changes how much you can make versus how likely you are to profit.">?</span>
+                            </label>
+                            <input type="range" id="width-slider" min="1" max="3" step="1" value="2">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. Outcome Visualization -->
+                <section class="simple-section">
+                    <h2 class="simple-h2"><span class="step-num">4</span> What could happen?</h2>
+                    <div class="scenario-grid">
+                        <div class="scenario-card" id="sc-up">
+                            <i data-lucide="trending-up" class="sc-icon"></i>
+                            <div class="sc-title">If it rises 5%</div>
+                            <div class="sc-val">—</div>
+                            <div class="sc-verdict">—</div>
+                        </div>
+                        <div class="scenario-card" id="sc-flat">
+                            <i data-lucide="minus" class="sc-icon"></i>
+                            <div class="sc-title">If it stays flat</div>
+                            <div class="sc-val">—</div>
+                            <div class="sc-verdict">—</div>
+                        </div>
+                        <div class="scenario-card" id="sc-down">
+                            <i data-lucide="trending-down" class="sc-icon"></i>
+                            <div class="sc-title">If it falls 5%</div>
+                            <div class="sc-val">—</div>
+                            <div class="sc-verdict">—</div>
+                        </div>
+                    </div>
+                    <div class="simple-chart-card">
+                        <div style="height: 260px; width: 100%;">
+                            <canvas id="simplePayoffChart"></canvas>
+                        </div>
+                        <p class="chart-caption" id="payoff-caption">Build a trade above to see your profit & loss zones.</p>
+                    </div>
+                </section>
+
+                <!-- 5. Educational layer + simplified backtest -->
+                <section class="simple-section">
+                    <button class="btn-cta" id="simple-run-btn" type="button">
+                        <i data-lucide="history" style="width: 18px; height: 18px;"></i>
+                        See how this would have performed
+                    </button>
+                    <div class="result-card" id="simple-result" hidden></div>
+                </section>
+
+            </div>
+        </div>
+        <!-- ===================== END SIMPLE VIEW ===================== -->
     </div>
 
     <!-- Core App Logic Script -->
@@ -408,5 +577,6 @@
     <script src="strategies.js"></script>
     <script src="simulator.js"></script>
     <script src="app.js"></script>
+    <script src="simple.js?v=1"></script>
 </body>
 </html>

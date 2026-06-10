@@ -6,7 +6,14 @@ const OptionSimulator = {
     // Default lot sizes for NSE option contracts.
     // NOTE: NSE revises these periodically — verify against the latest NSE
     // circular before relying on absolute rupee figures.
+    // The full F&O universe lives in symbols.json (loaded into
+    // window.NSE_SYMBOL_MAP); this hardcoded map is the offline fallback for the
+    // core symbols when that lookup is unavailable.
     getLotSize(symbol) {
+        const key = symbol.toUpperCase();
+        const fromUniverse = this._lookup(key);
+        if (fromUniverse && fromUniverse.lot) return fromUniverse.lot;
+
         const lotSizes = {
             'NIFTY': 75,
             'BANKNIFTY': 35,
@@ -16,7 +23,13 @@ const OptionSimulator = {
             'TCS': 175,
             'INFY': 400
         };
-        return lotSizes[symbol.toUpperCase()] || 100;
+        return lotSizes[key] || 100;
+    },
+
+    // Resolves a symbol's metadata from the loaded NSE universe, if present.
+    _lookup(symbol) {
+        const map = (typeof window !== 'undefined') && window.NSE_SYMBOL_MAP;
+        return map ? map[symbol.toUpperCase()] : null;
     },
 
     /**
@@ -68,6 +81,10 @@ const OptionSimulator = {
 
     // Default strike step size for NSE options
     getStrikeStep(symbol) {
+        const key = symbol.toUpperCase();
+        const fromUniverse = this._lookup(key);
+        if (fromUniverse && fromUniverse.step) return fromUniverse.step;
+
         const steps = {
             'NIFTY': 50,
             'BANKNIFTY': 100,
@@ -76,7 +93,7 @@ const OptionSimulator = {
             'TCS': 50,
             'INFY': 10
         };
-        return steps[symbol.toUpperCase()] || 50;
+        return steps[key] || 50;
     },
 
     /**

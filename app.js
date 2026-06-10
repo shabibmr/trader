@@ -23,21 +23,94 @@ const state = {
 };
 
 // Initialization on DOM Load
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     // 1. Initialize Lucide Icons
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
     }
 
-    // 2. Setup Tab Handlers
+    // 2. Apply saved theme before first paint
+    initTheme();
+
+    // 3. Setup Tab Handlers
     initTabs();
 
-    // 3. Setup Config Control Listeners
+    // 4. Populate the NSE symbol universe (drives the ticker dropdown and the
+    //    lot-size / strike-step lookups). Must finish before wiring controls so
+    //    the dropdown reflects state.symbol.
+    await loadSymbolUniverse();
+
+    // 5. Setup Config Control Listeners
     initControls();
 
-    // 4. Load Initial Data
+    // 6. Load Initial Data
     fetchOptionChainData();
 });
+
+/* =========================================================================
+   NSE Symbol Universe (single source of truth: symbols.json)
+   ========================================================================= */
+async function loadSymbolUniverse() {
+    const tickerSelect = document.getElementById("ticker-select");
+    const host = window.location.origin === "null" || window.location.protocol === "file:" ? "http://localhost:8080" : "";
+
+    try {
+        const res = await fetch(`${host}/symbols.json`);
+        if (!res.ok) throw new Error("HTTP error " + res.status);
+        const list = await res.json();
+
+        // Expose for simulator.js (lot size / strike step) and other consumers.
+        window.NSE_SYMBOLS = list;
+        window.NSE_SYMBOL_MAP = list.reduce((map, s) => (map[s.symbol] = s, map), {});
+
+        // Build the dropdown, grouping indices and equities.
+        tickerSelect.innerHTML = "";
+        const groups = {
+            index: document.createElement("optgroup"),
+            equity: document.createElement("optgroup")
+        };
+        groups.index.label = "Indices";
+        groups.equity.label = "Equities (F&O)";
+
+        list.forEach(s => {
+            const opt = document.createElement("option");
+            opt.value = s.symbol;
+            opt.text = s.type === "index" ? `${s.name} (Index)` : `${s.name} (${s.symbol})`;
+            (groups[s.type] || groups.equity).appendChild(opt);
+        });
+        if (groups.index.children.length) tickerSelect.appendChild(groups.index);
+        if (groups.equity.children.length) tickerSelect.appendChild(groups.equity);
+
+        // Keep the initial selection in sync with state (defaults to NIFTY).
+        if (window.NSE_SYMBOL_MAP[state.symbol]) {
+            tickerSelect.value = state.symbol;
+        } else if (list.length) {
+            state.symbol = list[0].symbol;
+            tickerSelect.value = state.symbol;
+        }
+    } catch (err) {
+        // The dropdown already contains a static NIFTY fallback option in HTML,
+        // so the app still works against the default symbol if this fails.
+        console.error("Failed to load symbol universe:", err);
+    }
+}
+
+/* =========================================================================
+   Theme Toggle
+   ========================================================================= */
+function initTheme() {
+    // Precedence: explicit ?theme= deep link > saved preference.
+    const urlTheme = new URLSearchParams(window.location.search).get('theme');
+    const saved = (urlTheme === 'light' || urlTheme === 'dark') ? urlTheme : localStorage.getItem('algo-theme');
+    if (saved === 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+    }
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+        const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+        document.documentElement.setAttribute('data-theme', isLight ? 'dark' : 'light');
+        localStorage.setItem('algo-theme', isLight ? 'dark' : 'light');
+    });
+}
 
 /* =========================================================================
    1. Tab Panel Management
@@ -221,6 +294,9 @@ function fetchOptionChainData() {
             });
             
             renderOptionChainBoard();
+
+            // Let Simple mode re-render against the freshly loaded spot/chain.
+            if (window.onChainDataLoaded) window.onChainDataLoaded();
         })
         .catch(err => {
             console.error("Option Chain API Fetch error:", err);
@@ -266,7 +342,7 @@ function renderOptionChainBoard() {
             </td>
             <td>${ce.totalBuyQuantity ? (ce.totalBuyQuantity + ce.totalSellQuantity).toLocaleString('en-IN') : '--'}</td>
             <td style="color: var(--color-call);">${ce.impliedVolatility ? ce.impliedVolatility + '%' : '--'}</td>
-            <td style="font-weight: 700; color: white;">${ce.lastPrice ? '₹' + ce.lastPrice.toFixed(2) : '--'}</td>
+            <td style="font-weight: 700; color: var(--text-primary);">${ce.lastPrice ? '₹' + ce.lastPrice.toFixed(2) : '--'}</td>
             <td>
                 ${ce.lastPrice ? `
                     <div style="display: flex; gap: 4px; justify-content: center;">
@@ -288,7 +364,7 @@ function renderOptionChainBoard() {
                     </div>
                 ` : '--'}
             </td>
-            <td style="font-weight: 700; color: white;">${pe.lastPrice ? '₹' + pe.lastPrice.toFixed(2) : '--'}</td>
+            <td style="font-weight: 700; color: var(--text-primary);">${pe.lastPrice ? '₹' + pe.lastPrice.toFixed(2) : '--'}</td>
             <td style="color: var(--color-put);">${pe.impliedVolatility ? pe.impliedVolatility + '%' : '--'}</td>
             <td>${pe.totalBuyQuantity ? (pe.totalBuyQuantity + pe.totalSellQuantity).toLocaleString('en-IN') : '--'}</td>
             <td style="color: ${pe.changeinOpenInterest >= 0 ? 'var(--color-profit)' : 'var(--color-loss)'};">
@@ -365,7 +441,7 @@ function updateLegsBuilderUI() {
                 Strike: ${leg.strike}
             </div>
             <div style="font-size: 13px; color: var(--text-secondary);">
-                Premium: <span style="font-family: 'JetBrains Mono', monospace; font-weight: 600; color: white;">₹${leg.entryPremium.toFixed(2)}</span>
+                Premium: <span style="font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--text-primary);">₹${leg.entryPremium.toFixed(2)}</span>
             </div>
             <div class="form-group" style="flex-direction: row; align-items: center; gap: 8px;">
                 <label style="margin-bottom: 0;">Lots</label>
@@ -805,7 +881,7 @@ function populateTradeLedger(res) {
         tr.innerHTML = `
             <td>${trade.entryDate}</td>
             <td>${trade.exitDate}</td>
-            <td style="font-weight: 600; color: white;">${trade.strategy}</td>
+            <td style="font-weight: 600; color: var(--text-primary);">${trade.strategy}</td>
             <td>₹${trade.entrySpot.toFixed(2)}</td>
             <td>₹${trade.exitSpot.toFixed(2)}</td>
             <td>
@@ -940,3 +1016,47 @@ function renderBacktestCharts() {
         }
     });
 }
+
+/* =========================================================================
+   9. Simple / Pro View Switcher
+   Toggles the two top-level views and persists the choice. Both views share
+   the same `state` and engine, so legs/results carry across. Simple mode
+   (simple.js) is the default first-run experience; Pro is one tap away.
+   ========================================================================= */
+function setViewMode(mode) {
+    const simpleView = document.getElementById("simple-view");
+    const proView = document.getElementById("pro-view");
+    if (!simpleView || !proView) return;
+
+    const isSimple = mode === "simple";
+    simpleView.style.display = isSimple ? "" : "none";
+    // #pro-view is `display: contents` in CSS so the existing layout is intact;
+    // restore that (empty string) rather than forcing `block`.
+    proView.style.display = isSimple ? "none" : "";
+
+    document.querySelectorAll(".view-toggle-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.view === mode);
+    });
+
+    state.viewMode = mode;
+    localStorage.setItem("algo-view-mode", mode);
+
+    if (isSimple && window.onEnterSimpleMode) window.onEnterSimpleMode();
+}
+
+// Expose helpers used by simple.js (these are module-scope function declarations).
+window.setViewMode = setViewMode;
+window.populateMetricsCards = populateMetricsCards;
+window.populateTradeLedger = populateTradeLedger;
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".view-toggle-btn").forEach(btn => {
+        btn.addEventListener("click", () => setViewMode(btn.dataset.view));
+    });
+    // Precedence: explicit ?view= deep link > saved preference > Simple default.
+    const urlView = new URLSearchParams(window.location.search).get("view");
+    const initialView = (urlView === "simple" || urlView === "pro")
+        ? urlView
+        : (localStorage.getItem("algo-view-mode") || "simple");
+    setViewMode(initialView);
+});

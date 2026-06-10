@@ -1,15 +1,24 @@
 import http.server
 import socketserver
-import urllib.request
-import urllib.error
-import http.cookiejar
+import urllib.parse
 import json
-import gzip
-import zlib
 import os
 import re
+import time
 import random
 import datetime
+import math
+
+import requests
+
+# jugaad-data pulls real NSE daily OHLC for stocks (stock_df) and indices
+# (index_df). Imported defensively so the server still boots — and the backtest
+# silently falls back to the synthetic generator — if the package isn't installed.
+try:
+    from jugaad_data.nse import stock_df, index_df
+    JUGAAD_AVAILABLE = True
+except Exception:
+    JUGAAD_AVAILABLE = False
 
 
 def stable_seed(symbol):
@@ -25,79 +34,128 @@ def stable_seed(symbol):
     return seed
 
 
-def decode_http_body(response):
-    """
-    Decompresses an HTTP response body honouring its Content-Encoding.
-    Handles gzip and deflate (the encodings we actually advertise). Brotli is
-    intentionally not advertised because the standard library cannot decode it.
-    """
-    raw = response.read()
-    encoding = (response.info().get('Content-Encoding') or '').lower()
-    if 'gzip' in encoding:
-        return gzip.decompress(raw)
-    if 'deflate' in encoding:
-        try:
-            return zlib.decompress(raw)
-        except zlib.error:
-            # Some servers send raw deflate without the zlib header
-            return zlib.decompress(raw, -zlib.MAX_WBITS)
-    return raw
-
 PORT = 8080
 DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
-# Setup cookie jar and HTTP opener for browser spoofing
-cj = http.cookiejar.CookieJar()
-cookie_processor = urllib.request.HTTPCookieProcessor(cj)
-opener = urllib.request.build_opener(cookie_processor)
-opener.addheaders = [
-    ('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'),
-    ('Accept-Language', 'en-US,en;q=0.9'),
-    ('Accept-Encoding', 'gzip, deflate'),
-    ('Accept', 'application/json, text/plain, */*'),
-    ('Referer', 'https://www.nseindia.com/option-chain'),
-    ('Connection', 'keep-alive')
-]
 
-# Install the opener globally
-urllib.request.install_opener(opener)
+def load_symbol_universe():
+    """
+    Loads symbols.json — the single source of truth for the NSE F&O universe
+    shared with the frontend. Returns a dict keyed by uppercase symbol with
+    spot / step / vol metadata used to seed the synthetic fallbacks. Returns an
+    empty dict if the file is missing, in which case the hardcoded defaults
+    below take over.
+    """
+    path = os.path.join(DIRECTORY, 'symbols.json')
+    try:
+        with open(path, 'r', encoding='utf-8') as f:
+            return {s['symbol'].upper(): s for s in json.load(f)}
+    except (OSError, ValueError) as e:
+        print(f"[SERVER] Could not load symbols.json ({e}); using built-in defaults.")
+        return {}
+
+
+SYMBOLS = load_symbol_universe()
+
+# Historical-data bridge (jugaad-data). index_df needs niftyindices.com index
+# names, which differ from our tickers (and from the display names in
+# symbols.json, e.g. "BANK NIFTY" there vs "NIFTY BANK" at NSE). This map is the
+# single place to fix any name mismatch found at runtime.
+NSE_INDEX_NAMES = {
+    'NIFTY': 'NIFTY 50',
+    'BANKNIFTY': 'NIFTY BANK',
+    'FINNIFTY': 'NIFTY FINANCIAL SERVICES',
+    'MIDCPNIFTY': 'NIFTY MIDCAP SELECT',
+    'NIFTYNXT50': 'NIFTY NEXT 50',
+}
+_HIST_CACHE = {}            # symbol -> (epoch_fetched, data_list)
+HIST_CACHE_TTL = 6 * 3600  # re-fetch at most every 6h; avoids a network hit per backtest
+HIST_YEARS = 2             # match the existing 2-year synthetic window
+
+# NSE bridge configuration.
+# NSE sits behind Akamai bot protection that resets bare urllib connections, and
+# in mid-2024 it moved the option-chain API: the old single-shot
+# /api/option-chain-indices now 404s. The working path is a requests.Session
+# (which negotiates cookies + Brotli) that warms up two browser pages, reads the
+# expiry list from /api/option-chain-contract-info, then pulls the chain one
+# expiry at a time from /api/option-chain-v3 and merges the results.
+NSE_BASE = "https://www.nseindia.com"
+NSE_HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Accept-Language': 'en-US,en;q=0.9',
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Accept': 'application/json, text/plain, */*',
+    'Referer': 'https://www.nseindia.com/option-chain',
+    'Connection': 'keep-alive',
+}
+# v3 returns one expiry per request; cap how many near-term expiries we pull so
+# a chain refresh stays a few seconds, not dozens of round-trips.
+MAX_LIVE_EXPIRIES = 3
 
 def fetch_live_nse_option_chain(symbol):
     """
-    Fetches the live option chain from NSE using browser impersonation.
-    Automatically falls back to a realistic mock dataset if blocked or offline.
+    Fetches the live option chain from NSE via a browser-like requests.Session.
+    Warms up cookies, reads the expiry list, then pulls the first few expiries
+    from the v3 endpoint and merges them into the legacy
+    {records: {data, expiryDates, underlyingValue, timestamp}} shape the
+    frontend expects. Falls back to a realistic synthetic dataset on any error.
     """
     symbol_upper = symbol.upper()
-    is_index = symbol_upper in ['NIFTY', 'BANKNIFTY', 'FINNIFTY', 'MIDCPNIFTY']
-    
-    base_api_url = "https://www.nseindia.com/api/option-chain-indices?symbol=" if is_index else "https://www.nseindia.com/api/option-chain-equities?symbol="
-    url = f"{base_api_url}{symbol_upper}"
-    
+    meta = SYMBOLS.get(symbol_upper)
+    if meta:
+        is_index = meta.get('type') == 'index'
+    else:
+        is_index = symbol_upper in ['NIFTY', 'BANKNIFTY', 'FINNIFTY', 'MIDCPNIFTY', 'NIFTYNXT50']
+    chain_type = 'Indices' if is_index else 'Equity'
+
     try:
-        # Step 1: Visit main NSE page to capture session cookies
-        home_req = urllib.request.Request("https://www.nseindia.com/", headers={
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-        })
-        with urllib.request.urlopen(home_req, timeout=5) as r:
-            r.read() # just reading to register cookies
-            
-        # Step 2: Visit options page to establish cookie context
-        opt_req = urllib.request.Request("https://www.nseindia.com/option-chain", headers={
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-        })
-        with urllib.request.urlopen(opt_req, timeout=5) as r:
-            r.read()
-            
-        # Step 3: Fetch Option Chain API
-        api_req = urllib.request.Request(url)
-        with urllib.request.urlopen(api_req, timeout=8) as response:
-            data = decode_http_body(response)
-            chain = json.loads(data.decode('utf-8'))
-            chain['dataSource'] = 'live'
-            return chain
+        session = requests.Session()
+        session.headers.update(NSE_HEADERS)
+
+        # Warm-up: these set the Akamai session cookies. The homepage may answer
+        # 403, but the option-chain page returns 200 and registers the cookies.
+        session.get(NSE_BASE + "/", timeout=6)
+        session.get(NSE_BASE + "/option-chain", timeout=6)
+
+        # 1) Expiry list (and strikes) for this symbol.
+        ci = session.get(f"{NSE_BASE}/api/option-chain-contract-info?symbol={symbol_upper}", timeout=8)
+        ci.raise_for_status()
+        expiries = ci.json().get('expiryDates', []) or []
+        if not expiries:
+            raise ValueError("contract-info returned no expiry dates")
+        expiries = expiries[:MAX_LIVE_EXPIRIES]
+
+        # 2) Pull each expiry's chain via v3 and merge the per-strike rows.
+        merged = []
+        underlying = None
+        timestamp = None
+        for exp in expiries:
+            url = (f"{NSE_BASE}/api/option-chain-v3"
+                   f"?type={chain_type}&symbol={symbol_upper}&expiry={urllib.parse.quote(exp)}")
+            r = session.get(url, timeout=8)
+            r.raise_for_status()
+            rec = r.json().get('records', {}) or {}
+            if underlying is None:
+                underlying = rec.get('underlyingValue')
+                timestamp = rec.get('timestamp')
+            merged.extend(rec.get('data', []) or [])
+            time.sleep(0.3)  # be gentle; avoid tripping rate limits
+
+        if not merged or underlying is None:
+            raise ValueError("v3 returned an empty chain")
+
+        return {
+            'dataSource': 'live',
+            'records': {
+                'data': merged,
+                'expiryDates': expiries,
+                'underlyingValue': underlying,
+                'timestamp': timestamp or datetime.datetime.now().strftime("%d-%b-%Y %H:%M:%S"),
+            }
+        }
 
     except Exception as e:
-        print(f"[NSE BRIDGE] Failed to download from NSE ({e}). Using high-fidelity synthetic fallbacks.")
+        print(f"[NSE BRIDGE] Live fetch failed ({type(e).__name__}: {e}). Using synthetic fallback.")
         return generate_mock_option_chain(symbol_upper)
 
 def generate_mock_option_chain(symbol):
@@ -105,7 +163,8 @@ def generate_mock_option_chain(symbol):
     Generates a high-quality mock option chain that resembles NSE API structure
     exactly, allowing client-side JS to parse it identically.
     """
-    spot = {
+    meta = SYMBOLS.get(symbol.upper())
+    spot = meta['spot'] if meta else {
         'NIFTY': 22500.0,
         'BANKNIFTY': 48500.0,
         'FINNIFTY': 21500.0,
@@ -113,7 +172,7 @@ def generate_mock_option_chain(symbol):
         'TCS': 3850.0,
         'INFY': 1450.0
     }.get(symbol, 1000.0)
-    
+
     # Expirations (weekly / monthly Thursdays)
     expirations = []
     current_date = datetime.date.today()
@@ -127,7 +186,7 @@ def generate_mock_option_chain(symbol):
         days_ahead += 1
         
     strikes = []
-    step = 50 if symbol == 'NIFTY' else (100 if symbol == 'BANKNIFTY' else (20 if symbol == 'FINNIFTY' else 10))
+    step = meta['step'] if meta else (50 if symbol == 'NIFTY' else (100 if symbol == 'BANKNIFTY' else (20 if symbol == 'FINNIFTY' else 10)))
     
     # 20 strikes around the spot
     rounded_spot = round(spot / step) * step
@@ -216,8 +275,11 @@ def generate_historical_underlying(symbol):
     # Deterministic seed so a symbol's path is identical across server restarts.
     random.seed(stable_seed(symbol))
 
-    # Base params
-    price = {
+    # Base params. The 2-year history walks back from today, so seed the start
+    # price a notch below the symbol's current spot to leave room for the
+    # positive long-term drift below.
+    meta = SYMBOLS.get(symbol)
+    price = (meta['spot'] * 0.78) if meta else {
         'NIFTY': 17500.0,
         'BANKNIFTY': 39000.0,
         'FINNIFTY': 17000.0,
@@ -225,15 +287,15 @@ def generate_historical_underlying(symbol):
         'TCS': 3100.0,
         'INFY': 1200.0
     }.get(symbol, 1000.0)
-    
-    volatility = {
+
+    volatility = (meta['vol'] if meta else {
         'NIFTY': 0.010,
         'BANKNIFTY': 0.015,
         'FINNIFTY': 0.012,
         'RELIANCE': 0.015,
         'TCS': 0.013,
         'INFY': 0.018
-    }.get(symbol, 0.015)
+    }.get(symbol, 0.015))
     
     # Drift
     drift = 0.0003 # positive long-term drift
@@ -288,8 +350,187 @@ def generate_historical_underlying(symbol):
 
         price = close_price
         current_date += datetime.timedelta(days=1)
-        
+
     return data
+
+
+def realized_iv_path(closes, baseline_iv, window=20):
+    """Trailing-window annualized realized volatility (%) used as a per-day IV
+    proxy, since real OHLC carries no implied vol. Days before the window has
+    filled fall back to the symbol's baseline IV so early backtest days still
+    price. This keeps the simulator's dynamic-IV vega P&L meaningful on real data.
+    """
+    ivs, rets = [], []
+    for i, c in enumerate(closes):
+        if i > 0 and closes[i - 1] > 0:
+            rets.append(math.log(c / closes[i - 1]))
+        w = rets[-window:]
+        if len(w) >= max(5, window // 2):
+            mean = sum(w) / len(w)
+            var = sum((x - mean) ** 2 for x in w) / (len(w) - 1)
+            ivs.append(round(max(5.0, min(80.0, (var ** 0.5) * (252 ** 0.5) * 100.0)), 2))
+        else:
+            ivs.append(round(baseline_iv, 2))
+    return ivs
+
+
+def _records_from_rows(rows, meta):
+    """Shared finalizer: takes rows pre-normalized to dicts with keys
+    {date(str 'YYYY-MM-DD'), open, high, low, close, volume}, ascending by date,
+    attaches a realized-vol IV proxy, and returns the standard array (or None if
+    too short to backtest).
+    """
+    rows = [r for r in rows if r and r.get('close')]
+    if len(rows) < 5:
+        return None
+    baseline_iv = max(8.0, (meta['vol'] if meta else 0.012) * (252 ** 0.5) * 100.0)
+    closes = [float(r['close']) for r in rows]
+    ivs = realized_iv_path(closes, baseline_iv)
+    for i, r in enumerate(rows):
+        r['iv'] = ivs[i]
+    return rows
+
+
+def _equity_history_jugaad(sym, from_d, to_d):
+    """Real equity daily OHLCV via jugaad-data's stock_df (NSE historical API)."""
+    df = stock_df(symbol=sym, from_date=from_d, to_date=to_d, series="EQ")
+    if df is None or len(df) == 0:
+        return []
+    df = df.sort_values('DATE')
+    rows = []
+    for _, row in df.iterrows():
+        d = row['DATE']
+        rows.append({
+            'date': d.strftime('%Y-%m-%d') if hasattr(d, 'strftime') else str(d)[:10],
+            'open': round(float(row['OPEN']), 2),
+            'high': round(float(row['HIGH']), 2),
+            'low': round(float(row['LOW']), 2),
+            'close': round(float(row['CLOSE']), 2),
+            'volume': int(row['VOLUME']) if row.get('VOLUME') else 0,
+        })
+    return rows
+
+
+def _index_history_jugaad(name, from_d, to_d):
+    """Real index daily OHLC via jugaad-data's index_df (niftyindices.com).
+    Works where niftyindices is reachable; raises otherwise."""
+    df = index_df(symbol=name, from_date=from_d, to_date=to_d)
+    if df is None or len(df) == 0:
+        return []
+    df = df.sort_values('HistoricalDate')
+    rows = []
+    for _, row in df.iterrows():
+        d = row['HistoricalDate']
+        rows.append({
+            'date': d.strftime('%Y-%m-%d') if hasattr(d, 'strftime') else str(d)[:10],
+            'open': round(float(row['OPEN']), 2),
+            'high': round(float(row['HIGH']), 2),
+            'low': round(float(row['LOW']), 2),
+            'close': round(float(row['CLOSE']), 2),
+            'volume': 0,
+        })
+    return rows
+
+
+def _index_history_nse(name, from_d, to_d):
+    """Real index daily OHLC straight from NSE's own indicesHistory API via a
+    browser-like warmed session — the same bot-evasion pattern the live option
+    chain uses. Chunked into <=180-day windows (NSE caps the per-request range)
+    and merged. Used as a fallback when index_df / niftyindices is unreachable.
+    """
+    session = requests.Session()
+    session.headers.update(NSE_HEADERS)
+    session.get(NSE_BASE + "/", timeout=8)
+    session.get(NSE_BASE + "/reports-indices-historical-index-data", timeout=8)
+    session.headers['Referer'] = NSE_BASE + "/reports-indices-historical-index-data"
+
+    merged = {}
+    chunk_start = from_d
+    while chunk_start <= to_d:
+        chunk_end = min(chunk_start + datetime.timedelta(days=180), to_d)
+        url = (f"{NSE_BASE}/api/historical/indicesHistory"
+               f"?indexType={urllib.parse.quote(name)}"
+               f"&from={chunk_start.strftime('%d-%m-%Y')}"
+               f"&to={chunk_end.strftime('%d-%m-%Y')}")
+        resp = session.get(url, timeout=12)
+        recs = resp.json().get('data', {}).get('indexCloseOnlineRecords', [])
+        for rec in recs:
+            ts = rec.get('EOD_TIMESTAMP')          # e.g. "06-Jun-2026"
+            if not ts:
+                continue
+            iso = datetime.datetime.strptime(ts, '%d-%b-%Y').strftime('%Y-%m-%d')
+            merged[iso] = {
+                'date': iso,
+                'open': round(float(rec['EOD_OPEN_INDEX_VAL']), 2),
+                'high': round(float(rec['EOD_HIGH_INDEX_VAL']), 2),
+                'low': round(float(rec['EOD_LOW_INDEX_VAL']), 2),
+                'close': round(float(rec['EOD_CLOSE_INDEX_VAL']), 2),
+                'volume': 0,
+            }
+        chunk_start = chunk_end + datetime.timedelta(days=1)
+        time.sleep(0.3)
+    return [merged[k] for k in sorted(merged)]
+
+
+def fetch_real_historical(symbol):
+    """Downloads real NSE daily OHLC and normalizes it to the standard
+    [{date, open, high, low, close, volume, iv}] array (ascending by date).
+    Equities use jugaad-data's stock_df; indices try jugaad's index_df first,
+    then fall back to NSE's own indicesHistory API. Returns None on any failure
+    so the caller can fall back to synthetic data.
+    """
+    sym = symbol.upper()
+    meta = SYMBOLS.get(sym)
+    is_index = bool(meta and meta.get('type') == 'index')
+    to_d = datetime.date.today()
+    from_d = to_d - datetime.timedelta(days=HIST_YEARS * 365)
+
+    if is_index:
+        name = NSE_INDEX_NAMES.get(sym)
+        if not name:
+            return None
+        if JUGAAD_AVAILABLE:
+            try:
+                rows = _index_history_jugaad(name, from_d, to_d)
+                rec = _records_from_rows(rows, meta)
+                if rec:
+                    return rec
+            except Exception as e:
+                print(f"[SERVER] index_df failed for {sym} ({e}); trying NSE indicesHistory")
+        try:
+            rows = _index_history_nse(name, from_d, to_d)
+            return _records_from_rows(rows, meta)
+        except Exception as e:
+            print(f"[SERVER] NSE indicesHistory failed for {sym}: {e}")
+            return None
+
+    if not JUGAAD_AVAILABLE:
+        return None
+    try:
+        rows = _equity_history_jugaad(sym, from_d, to_d)
+        return _records_from_rows(rows, meta)
+    except Exception as e:
+        print(f"[SERVER] stock_df failed for {sym}: {e}")
+        return None
+
+
+def get_historical_underlying(symbol):
+    """Returns real NSE history when available (cached up to HIST_CACHE_TTL),
+    otherwise the deterministic synthetic series. Same array shape either way, so
+    the frontend is agnostic to the source.
+    """
+    sym = symbol.upper()
+    cached = _HIST_CACHE.get(sym)
+    if cached and (time.time() - cached[0]) < HIST_CACHE_TTL:
+        return cached[1]
+    real = fetch_real_historical(sym)
+    if real:
+        print(f"[SERVER] Historical: REAL NSE data for {sym} ({len(real)} rows)")
+        _HIST_CACHE[sym] = (time.time(), real)
+        return real
+    print(f"[SERVER] Historical: falling back to SIMULATED data for {sym}")
+    return generate_historical_underlying(sym)
+
 
 class CustomAPIHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     def end_headers(self):
@@ -297,6 +538,12 @@ class CustomAPIHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        # Never cache the static assets: during local dev a stale styles.css /
+        # app.js silently masks edits (the browser keeps the old copy because
+        # SimpleHTTPRequestHandler only sends Last-Modified).
+        self.send_header('Cache-Control', 'no-store, must-revalidate')
+        self.send_header('Pragma', 'no-cache')
+        self.send_header('Expires', '0')
         super().end_headers()
 
     def do_OPTIONS(self):
@@ -340,7 +587,7 @@ class CustomAPIHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             
         print(f"[SERVER API] Delivering historical daily data for underlying: {symbol}")
         try:
-            data = generate_historical_underlying(symbol)
+            data = get_historical_underlying(symbol)
             self.send_response(200)
             self.send_header('Content-Type', 'application/json')
             self.end_headers()
